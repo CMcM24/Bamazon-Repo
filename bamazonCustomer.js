@@ -46,23 +46,24 @@ const queryUser = () => {
             message: "How many would you like to buy?"
         }
     ]).then(function (answer) {
+
         var userChoice = answer.product_choice;
         var quantity = parseInt(answer.product_amount);
+
         connection.query("SELECT stock_quantity FROM products WHERE id = ?", [userChoice], function (err, data) {
             if (err) throw err;
+
             var quantNum = data[0].stock_quantity;
-            console.log(quantNum);
-            console.log(quantity);
             var newQuan = quantNum - quantity;
-            console.log(newQuan);
+
             if (newQuan >= 0) {
                 connection.query("UPDATE products SET ? WHERE ?", [{ stock_quantity: newQuan }, { id: userChoice }], function (err, res) {
                     if (err) throw err;
-                    console.log(res);
+                    console.log("\nYou have purchased " + quantity + " of these items. \nAvailable stock reduced to " + newQuan + ".")
                 });
             }
             else{
-                console.log("Insufficient Quantity!");
+                console.log("\nInsufficient Quantity!");
             };
             connection.end();
         });
